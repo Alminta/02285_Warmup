@@ -37,14 +37,14 @@ class SearchClient:
             self.initial_state = State(
                 size_col=len(all_lines[0]), size_row=len(all_lines)
             )
-            print("Line length is {0}\n".format(len(all_lines[0])), file=sys.stderr)
-            print("Line count is: {0}\n".format(len(all_lines)), file=sys.stderr)
+            # print("Line length is {0}\n".format(len(all_lines[0])), file=sys.stderr)
+            # print("Line count is: {0}\n".format(len(all_lines)), file=sys.stderr)
 
             for line in all_lines:
                 for col, char in enumerate(line):
                     if char == "+":
                         self.initial_state.set_walls(row, col)
-                        print("row = {0},col = {1}".format(row, col), file=sys.stderr)
+                        # print("row = {0},col = {1}".format(row, col), file=sys.stderr)
                     elif char in "0123456789":
                         if self.initial_state.agent_row is not None:
                             print(

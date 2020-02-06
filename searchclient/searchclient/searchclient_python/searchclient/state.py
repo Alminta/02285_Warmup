@@ -6,6 +6,7 @@ from action import ALL_ACTIONS, ActionType
 class State:
     _RNG = random.Random(1)
     walls = None
+    goals = None
     MAX_ROW = None
     MAX_COL = None
 
@@ -39,7 +40,7 @@ class State:
             self.boxes = [
                 [None for _ in range(State.MAX_COL)] for _ in range(State.MAX_ROW)
             ]
-            self.goals = [
+            State.goals = [
                 [None for _ in range(State.MAX_COL)] for _ in range(State.MAX_ROW)
             ]
 
@@ -53,7 +54,7 @@ class State:
 
             # self.walls = [row[:] for row in copy.walls]
             self.boxes = [row[:] for row in copy.boxes]
-            self.goals = [row[:] for row in copy.goals]
+            # State.goals = [row[:] for row in copy.goals]
 
             self.parent = copy.parent
             self.action = copy.action
@@ -126,7 +127,7 @@ class State:
     def is_goal_state(self) -> "bool":
         for row in range(State.MAX_ROW):
             for col in range(State.MAX_COL):
-                goal = self.goals[row][col]
+                goal = State.goals[row][col]
                 box = self.boxes[row][col]
                 if goal is not None and (box is None or goal != box.lower()):
                     return False
@@ -154,7 +155,7 @@ class State:
             _hash = _hash * prime + self.agent_row
             _hash = _hash * prime + self.agent_col
             _hash = _hash * prime + hash(tuple(tuple(row) for row in self.boxes))
-            _hash = _hash * prime + hash(tuple(tuple(row) for row in self.goals))
+            _hash = _hash * prime + hash(tuple(tuple(row) for row in State.goals))
             _hash = _hash * prime + hash(tuple(tuple(row) for row in State.walls))
             self._hash = _hash
         return self._hash
@@ -170,7 +171,7 @@ class State:
             return False
         if self.boxes != other.boxes:
             return False
-        if self.goals != other.goals:
+        if State.goals != other.goals:
             return False
         # if walls != walls:
         #     return False
@@ -183,8 +184,8 @@ class State:
             for col in range(State.MAX_COL):
                 if self.boxes[row][col] is not None:
                     line.append(self.boxes[row][col])
-                elif self.goals[row][col] is not None:
-                    line.append(self.goals[row][col])
+                elif State.goals[row][col] is not None:
+                    line.append(State.goals[row][col])
                 elif State.walls[row][col] is not None:
                     line.append("+")
                 elif self.agent_row == row and self.agent_col == col:
