@@ -26,25 +26,19 @@ class SearchClient:
 
             # Read lines for level.
             row = 0
-            # print(server_messages, file=sys.stderr)
 
             all_lines = []
             while line:
                 all_lines.append(line)
-                print(line, file=sys.stderr)
                 line = server_messages.readline().rstrip()
 
-            self.initial_state = State(
-                size_col=len(all_lines[0]), size_row=len(all_lines)
-            )
-            # print("Line length is {0}\n".format(len(all_lines[0])), file=sys.stderr)
-            # print("Line count is: {0}\n".format(len(all_lines)), file=sys.stderr)
+            lengths = [len(c) for c in all_lines]
+            self.initial_state = State(size_col=max(lengths), size_row=len(all_lines))
 
             for line in all_lines:
                 for col, char in enumerate(line):
                     if char == "+":
                         self.initial_state.set_walls(row, col)
-                        # print("row = {0},col = {1}".format(row, col), file=sys.stderr)
                     elif char in "0123456789":
                         if self.initial_state.agent_row is not None:
                             print(
@@ -70,45 +64,7 @@ class SearchClient:
                         )
                         sys.exit(1)
                 row += 1
-                # max_col = col
-                # line = server_messages.readline().rstrip()
 
-            # while line:
-            #     for col, char in enumerate(line):
-            #         if char == "+":
-            #             self.initial_state.walls[row][col] = True
-            #         elif char in "0123456789":
-            #             if self.initial_state.agent_row is not None:
-            #                 print(
-            #                     "Error, encountered a second agent (client only supports one agent).",
-            #                     file=sys.stderr,
-            #                     flush=True,
-            #                 )
-            #                 sys.exit(1)
-            #             self.initial_state.agent_row = row
-            #             self.initial_state.agent_col = col
-            #         elif char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-            #             self.initial_state.boxes[row][col] = char
-            #         elif char in "abcdefghijklmnopqrstuvwxyz":
-            #             self.initial_state.goals[row][col] = char
-            #         elif char == " ":
-            #             # Free cell.
-            #             pass
-            #         else:
-            #             print(
-            #                 "Error, read invalid level character: {}".format(char),
-            #                 file=sys.stderr,
-            #                 flush=True,
-            #             )
-            #             sys.exit(1)
-            #     row += 1
-            #     # max_col = col
-            #     line = server_messages.readline().rstrip()
-            # self.MAX_row = row
-            # self.MAX_col = max_col
-            # self.initial_state.MAX_row = row
-            # self.initial_state.MAX_col = max_col
-            # print("We out here")
         except Exception as ex:
             print(
                 "Error parsing level: {}.".format(repr(ex)), file=sys.stderr, flush=True
@@ -122,11 +78,10 @@ class SearchClient:
             flush=True,
         )
         strategy.add_to_frontier(self.initial_state)
-        # print(self.initial_state.MAX_row)
         iterations = 0
-        # print("we made it!", file=sys.stderr)
         while True:
-            if iterations == 1000:
+
+            if iterations % 1000 == 0:
                 print(strategy.search_status(), file=sys.stderr, flush=True)
                 iterations = 0
 

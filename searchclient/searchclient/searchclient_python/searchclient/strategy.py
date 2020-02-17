@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from collections import deque
 from time import perf_counter
+from heapq import heappush, heappop, heapify
 
+import uuid
 import memory
 
 
@@ -109,27 +111,6 @@ class StrategyDFS(Strategy):
     def frontier_empty(self) -> "bool":
         return len(self.frontier) == 0
 
-    # def __init__(self):
-    #     super().__init__()
-    #     self.frontier = deque()
-    #     self.frontier_set = set()
-    #     # raise NotImplementedError
-
-    # def get_and_remove_leaf(self) -> "State":
-    #     raise NotImplementedError
-
-    # def add_to_frontier(self, state: "State"):
-    #     raise NotImplementedError
-
-    # def in_frontier(self, state: "State") -> "bool":
-    #     raise NotImplementedError
-
-    # def frontier_count(self) -> "int":
-    #     raise NotImplementedError
-
-    # def frontier_empty(self) -> "bool":
-    #     raise NotImplementedError
-
     def __repr__(self):
         return "Depth-first Search"
 
@@ -138,23 +119,28 @@ class StrategyBestFirst(Strategy):
     def __init__(self, heuristic: "Heuristic"):
         super().__init__()
         self.heuristic = heuristic
-        raise NotImplementedError
+        self.frontier = []
+        heapify(self.frontier)
+        self.frontier_set = set()
 
     def get_and_remove_leaf(self) -> "State":
-        raise NotImplementedError
+        leaf = heappop(self.frontier)[2]
+        self.frontier_set.remove(leaf)
+        return leaf
 
     def add_to_frontier(self, state: "State"):
-        raise NotImplementedError
+        tmp = self.heuristic.f(state)
+        heappush(self.frontier, (tmp, uuid.uuid1().int, state))
+        self.frontier_set.add(state)
 
     def in_frontier(self, state: "State") -> "bool":
-        raise NotImplementedError
+        return state in self.frontier_set
 
     def frontier_count(self) -> "int":
-        raise NotImplementedError
+        return len(self.frontier)
 
     def frontier_empty(self) -> "bool":
-        raise NotImplementedError
+        return len(self.frontier) == 0
 
     def __repr__(self):
         return "Best-first Search using {}".format(self.heuristic)
-

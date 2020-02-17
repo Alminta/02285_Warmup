@@ -1,5 +1,4 @@
 import random
-import sys
 from action import ALL_ACTIONS, ActionType
 
 
@@ -52,9 +51,7 @@ class State:
             self.agent_row = copy.agent_row
             self.agent_col = copy.agent_col
 
-            # self.walls = [row[:] for row in copy.walls]
             self.boxes = [row[:] for row in copy.boxes]
-            # State.goals = [row[:] for row in copy.goals]
 
             self.parent = copy.parent
             self.action = copy.action
@@ -63,7 +60,6 @@ class State:
 
     def set_walls(self, row, col):
         State.walls[row][col] = True
-        print("test1", file=sys.stderr)
 
     def get_children(self) -> "[State, ...]":
         """
@@ -173,8 +169,6 @@ class State:
             return False
         if State.goals != other.goals:
             return False
-        # if walls != walls:
-        #     return False
         return True
 
     def __repr__(self):
